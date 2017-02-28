@@ -40,18 +40,10 @@ X_test_data = pd.DataFrame(X_test.as_matrix()[:,1:78])
 # Cross validated AUC metric
 
 model = xgb.XGBClassifier()
-auc_xgboost = cv.cross_val_score(model, X_train_data,Y_train[1], scoring='roc_auc', cv=5)
+roc = metrics.make_scorer(metrics.roc_auc_score)
+auc_xgboost = cv.cross_val_score(model, X_train_data,Y_train[1], scoring=roc, cv=5)
 
-print('AUC cross-validated xgboost: %.2f%%' % (np.mean(auc_xgboost)*100)) #AUC 81.96% (seems very high)
-
-x_train,x_test,y_train,y_test = cv.train_test_split(X_train,Y_train,test_size=0.2)
-x_train = pd.DataFrame(x_train.as_matrix()[:,1:78])
-x_test = pd.DataFrame(x_test.as_matrix()[:,1:78])
-model.fit(x_train,y_train[1])
-y_pred = model.predict(x_test)
-predictions = [round(value) for value in y_pred]
-auc = metrics.roc_auc_score(y_true = y_test[1],y_score = predictions)
-print('AUC xgboost: %.2f%%' % (np.mean(auc)*100))
+print('AUC cross-validated xgboost: %.2f%%' % (np.mean(auc_xgboost)*100)) #AUC ~72%
 
 ######################
 # AdaBoostClassifier #
@@ -60,7 +52,7 @@ print('AUC xgboost: %.2f%%' % (np.mean(auc)*100))
 # Cross validated AUC metric
 
 model = ensemble.AdaBoostClassifier()
-auc_adaboost = cv.cross_val_score(model, X_train,Y_train[1], scoring='roc_auc', cv=5)
+auc_adaboost = cv.cross_val_score(model, X_train,Y_train[1], scoring=roc, cv=5)
 print('AUC: %.2f%%' % (np.mean(auc_adaboost)*100)) #AUC 79.66%
 
 ##############
@@ -70,8 +62,8 @@ print('AUC: %.2f%%' % (np.mean(auc_adaboost)*100)) #AUC 79.66%
 # Cross validated AUC metric
 
 model = ensemble.RandomForestClassifier()
-auc_random_forest = cv.cross_val_score(model, X_train,Y_train[1], scoring='roc_auc', cv=5)
-print('AUC: %.2f%%' % (np.mean(auc_random_forest)*100)) # AUC 76.33%
+auc_random_forest = cv.cross_val_score(model, X_train,Y_train[1], scoring=roc, cv=5)
+print('AUC RF: %.2f%%' % (np.mean(auc_random_forest)*100)) # AUC 76.33%
 
 ########################
 # Support Vector Machine
@@ -80,8 +72,8 @@ print('AUC: %.2f%%' % (np.mean(auc_random_forest)*100)) # AUC 76.33%
 # Cross validated AUC metric
 
 model = ensemble.RandomForestClassifier()
-auc_random_forest = cv.cross_val_score(model, X_train,Y_train[1], scoring='roc_auc', cv=5)
-print('AUC: %.2f%%' % (np.mean(auc_random_forest)*100)) # AUC 76.33%
+auc_random_forest = cv.cross_val_score(model, X_train,Y_train[1], scoring=roc, cv=5)
+print('AUC RF: %.2f%%' % (np.mean(auc_random_forest)*100)) # AUC 76.33%
 
 
 ########################################################
